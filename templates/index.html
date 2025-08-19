@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Bioinformatics Pipeline - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-upload me-2"></i>FNA File Upload & Analysis</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Upload your FNA (nucleotide) files to run the bioinformatics pipeline:
+                    FNA → FAA translation → HMMER search → Results analysis
+                </p>
+
+                <!-- File Upload Form -->
+                <form action="{{ url_for('upload_files') }}" method="post" enctype="multipart/form-data" class="mb-4">
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Select FNA Files</label>
+                        <input type="file" class="form-control" id="fileInput" name="files[]" 
+                               multiple accept=".fna,.fa,.fasta" required>
+                        <div class="form-text">Supported formats: .fna, .fa, .fasta</div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-upload me-1"></i>Upload Files
+                    </button>
+                </form>
+
+                <hr>
+
+                <!-- Analysis Controls -->
+                <div class="d-grid gap-2 d-md-flex">
+                    <button type="button" class="btn btn-success btn-lg flex-grow-1" 
+                            id="analyzeBtn" onclick="startAnalysis()">
+                        <i class="fas fa-play me-2"></i>Start Analysis
+                    </button>
+                    <form action="{{ url_for('clear_data') }}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger" 
+                                onclick="return confirm('This will delete all uploaded files and results. Continue?')">
+                            <i class="fas fa-trash me-1"></i>Clear All Data
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Overview -->
+        <div class="card shadow mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Pipeline Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="pipeline-step">
+                            <i class="fas fa-file-alt fa-2x text-primary mb-2"></i>
+                            <h6>1. Upload FNA</h6>
+                            <small class="text-muted">Upload nucleotide sequence files</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="pipeline-step">
+                            <i class="fas fa-exchange-alt fa-2x text-success mb-2"></i>
+                            <h6>2. Translate</h6>
+                            <small class="text-muted">Convert FNA to FAA using Prodigal</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="pipeline-step">
+                            <i class="fas fa-search fa-2x text-warning mb-2"></i>
+                            <h6>3. HMMER Search</h6>
+                            <small class="text-muted">Search against PFAM database</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="pipeline-step">
+                            <i class="fas fa-chart-bar fa-2x text-info mb-2"></i>
+                            <h6>4. Results</h6>
+                            <small class="text-muted">Generate reports and statistics</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Requirements -->
+        <div class="card shadow mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>System Requirements</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-tools me-2"></i>Required Tools:</h6>
+                        <ul class="list-unstyled ms-3">
+                            <li><i class="fas fa-check text-success me-1"></i>Prodigal (gene prediction)</li>
+                            <li><i class="fas fa-check text-success me-1"></i>HMMER (sequence search)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-database me-2"></i>Required Database:</h6>
+                        <ul class="list-unstyled ms-3">
+                            <li><i class="fas fa-database text-primary me-1"></i>PFAM-A.hmm database</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Note:</strong> Make sure to update the PFAM database path in <code>config.py</code> before running the analysis.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

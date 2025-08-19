@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-chart-line me-2"></i>Analysis Results</h2>
+        
+        {% if results_exist or counts_exist %}
+        <div class="row mb-4">
+            <!-- Results Summary -->
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-file-excel me-2"></i>Excel Reports</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if results_exist %}
+                        <div class="mb-3">
+                            <a href="{{ url_for('download_file', filename='hmmer_results.xlsx') }}" 
+                               class="btn btn-outline-success">
+                                <i class="fas fa-download me-1"></i>HMMER Results
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        {% if counts_exist %}
+                        <div class="mb-3">
+                            <a href="{{ url_for('download_file', filename='pfam_counts.xlsx') }}" 
+                               class="btn btn-outline-success">
+                                <i class="fas fa-download me-1"></i>PFAM Counts
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('download_all') }}" class="btn btn-success">
+                            <i class="fas fa-archive me-1"></i>Download All Results
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- File Statistics -->
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>File Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h3 class="text-primary">{{ faa_files|length }}</h3>
+                                    <small class="text-muted">FAA Files Generated</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h3 class="text-success">{{ hmmer_files|length }}</h3>
+                                    <small class="text-muted">HMMER Results</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generated Files -->
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-folder-open me-2"></i>Generated Files</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- FAA Files -->
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-file-code me-2"></i>FAA Files ({{ faa_files|length }})</h6>
+                        {% if faa_files %}
+                        <div class="file-list">
+                            {% for file in faa_files %}
+                            <div class="file-item">
+                                <i class="fas fa-file me-2"></i>{{ file.name }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No FAA files found</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- HMMER Files -->
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-file-alt me-2"></i>HMMER Results ({{ hmmer_files|length }})</h6>
+                        {% if hmmer_files %}
+                        <div class="file-list">
+                            {% for file in hmmer_files %}
+                            <div class="file-item">
+                                <i class="fas fa-file-alt me-2"></i>{{ file.name }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No HMMER result files found</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <!-- No Results -->
+        <div class="card shadow">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-exclamation-circle fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No Results Available</h4>
+                <p class="text-muted mb-4">
+                    No analysis results found. Please upload files and run the analysis first.
+                </p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Upload
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
